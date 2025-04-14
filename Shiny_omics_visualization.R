@@ -187,3 +187,31 @@ server <- function(input, output){
         name = "HeatMap"
       )
     })
+    # For the ID plot_corr, render the correlation plot with user-selected customization
+    output$plot_corr <- renderPlot({
+      
+      # Choose color palette from predefined options
+      color_scheme <- switch(input$color_scheme,
+                             "default" = colorRampPalette(c("#6D9EC1", "white", "#E46726"))(200),
+                             "blue_white_red" = colorRampPalette(c("blue", "white", "red"))(200),
+                             "green_yellow_red" = colorRampPalette(c("green", "yellow", "red"))(200))
+      
+      # Create the correlation plot
+      corrplot(cor(data()), 
+               method = ifelse(input$cust_corr,input$corr_method,"circle"), # method
+               tl.cex = ifelse(input$cust_corr,input$text_size,1), # text size
+               number.cex = ifelse(input$cust_corr,input$text_size,1),
+               col = color_scheme, # color palette
+               addCoef.col = "black",
+               tl.col = "black",
+               tl.srt = 45,
+               diag = FALSE, # remove diagonal
+               type = "upper", # show upper triangle only
+               addgrid.col = "gray",
+               cl.pos = if(input$show_legend) "r" else "n") # legend
+    })
+  })
+}
+
+# Start the application
+shinyApp(ui = ui, server = server)
