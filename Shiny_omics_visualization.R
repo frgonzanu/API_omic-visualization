@@ -1,5 +1,5 @@
 # First, we create the user interface (UI)
-ui <- fluidPage({
+ui <- fluidPage(
   # Theme and title of the app
   theme = shinytheme("flatly"),
   titlePanel("Omics Data Visualization"),
@@ -134,7 +134,7 @@ ui <- fluidPage({
       )
     )
   )
-})
+)
 
 # Now we define the server: what the app does
 server <- function(input, output){
