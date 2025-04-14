@@ -1,138 +1,133 @@
-# Primero creamos la interfaz de usuario (UI)
+# First, we create the user interface (UI)
 ui <- fluidPage({
-  # Tema y titulo de la aplicación
-  
+  # Theme and title of the app
   theme = shinytheme("flatly"),
-  titlePanel("Visualización de datos ómicos"),
+  titlePanel("Omics Data Visualization"),
   
-  #Aquí personalizamos la pantalla. Queremos que tenga un panel lateral donde cargar los archivos y
-  #podamos editar los parámetros de los gráficos. Queremos que en la pantalla principal, tenga varias pestañas:
-  #en la primera, una previsualización de los datos; en la segunda, el heatmap; en la tercera, 
-  #un gráfico de correlación de datos
+  # Here we customize the screen. We want a sidebar panel for file upload and 
+  # editing plot parameters. In the main panel, we want several tabs:
+  # the first for data preview, the second for the heatmap,
+  # and the third for a correlation plot.
   
-  #Diseñamos el panel lateral
-  
+  # Design the sidebar panel
   sidebarLayout(
     sidebarPanel(
-      #Carga de archivo
-      fileInput("archivo", 
-                "Cargar archivo .CSV", 
+      # File upload
+      fileInput("file", 
+                "Upload .CSV file", 
                 accept = ".csv"),
-      #Botón de analizar
-      actionButton("analizar",
-                   "Analizar datos"),
+      # Analyze button
+      actionButton("analyze",
+                   "Analyze Data"),
       hr(),
-      #Casilla para personalizar el Heat Map
-      checkboxInput("pers_hm",
-                    "Personalizar HeatMap",
+      # Checkbox to customize Heat Map
+      checkboxInput("cust_hm",
+                    "Customize HeatMap",
                     value = FALSE),
-      # Casilla para personalizar el gráfico de correlación
-      checkboxInput("pers_corr",
-                    "Personalizar gráfico de correlación",
+      # Checkbox to customize correlation plot
+      checkboxInput("cust_corr",
+                    "Customize correlation plot",
                     value = FALSE),
-      #Panel condicional: aparece SI la casilla de personalización de heatmap está seleccionada (condición)
+      # Conditional panel: appears IF the HeatMap customization checkbox is selected
       conditionalPanel(
-        condition = "input.pers_hm == true",
-        # Slider para altura y ancho de las celdas
-        sliderInput("alturaCeldas",
-                    "Altura de las celdas",
+        condition = "input.cust_hm == true",
+        # Sliders for cell height and width
+        sliderInput("cellHeight",
+                    "Cell Height",
                     min = 50, max = 150,
                     value = 50,
                     step = 5),
-        sliderInput("anchoCeldas",
-                    "Ancho de las celdas",
+        sliderInput("cellWidth",
+                    "Cell Width",
                     min = 50, max = 150,
                     value = 50,
                     step = 5),
-        #slider para el tamaño de las etiquetas
-        sliderInput("tam_texto",
-                    "Tamaño de las etiquetas",
+        # Slider for label size
+        sliderInput("label_size",
+                    "Label Size",
                     min = 5, max = 50,
                     value = 8,
                     step = 1),
-        #casilla para la personalización de la escala de colores
-        checkboxInput("pers_color",
-                      "Personalizar escala de colores", 
+        # Checkbox to customize color scale
+        checkboxInput("cust_color",
+                      "Customize color scale", 
                       value = FALSE),
-        # panel condicional: aparece SI la casilla de personalización de los colores está seleccionada
+        # Conditional panel: appears IF the color scale customization checkbox is selected
         conditionalPanel(
-          #condición
-          condition = "input.pers_color == true",
-          #sliders con el mínimo y el máximo de la escala
+          # Condition
+          condition = "input.cust_color == true",
+          # Sliders for min and max color scale values
           sliderInput("min_col",
-                      "Mínimo escala",
+                      "Scale Minimum",
                       min = -10, max = 0,
                       value = -3,
                       step = 1),
           sliderInput("max_col",
-                      "Máximo Escala",
+                      "Scale Maximum",
                       min = 1, max = 10,
                       value = 3,
                       step = 1),
-          #selección de color para los puntos mínimo, medio y máximo de la escala
+          # Color selection for lower, middle, and upper scale points
           colorPickr("lower_col",
-                     "Color mínimo",
+                     "Minimum Color",
                      selected = "green"),
           colorPickr("mid_col",
-                     "Color medio",
+                     "Middle Color",
                      selected = "white"),
           colorPickr("upper_col",
-                     "Color máximo",
+                     "Maximum Color",
                      selected = "red")
         )
       ),
-      #panel condicional: aparece SI la casilla de personalización del gráfico de correlación está seleccionada
+      # Conditional panel: appears IF the correlation plot customization checkbox is selected
       conditionalPanel(
-        #condición
-        condition = "input.pers_corr == true",
-        #casilla para mostrar/esconder leyenda
+        # Condition
+        condition = "input.cust_corr == true",
+        # Checkbox to show/hide legend
         checkboxInput("show_legend", 
-                      "Mostrar leyenda", 
+                      "Show legend", 
                       value = TRUE),
-        #slider para el tamaño del texto
+        # Slider for axis text size
         sliderInput("text_size", 
-                    "Tamaño de letra de los ejes", 
+                    "Axis text size", 
                     min = 0.5, max = 2, 
                     value = 1, 
                     step = 0.1),
-        #menú desplegable para elegir una paleta de colores entre las disponibles
+        # Dropdown to select color scheme
         selectInput("color_scheme", 
-                    "Esquema de colores",
+                    "Color Scheme",
                     choices = c("Default" = "default",
-                                "Azul-Blanco-Rojo" = "blue_white_red",
-                                "Verde-Amarillo-Rojo" = "green_yellow_red")),
-        #menú desplegable para elegir el símbolo que aparece en el gráfico
+                                "Blue-White-Red" = "blue_white_red",
+                                "Green-Yellow-Red" = "green_yellow_red")),
+        # Dropdown to select the symbol in the plot
         selectInput("corr_method",
-                    "Método",
-                    choices = c("Círculos" = "circle",
-                                "Cuadrados" = "square",
-                                "Elipses" = "ellipse",
-                                "Números" = "number"))
+                    "Method",
+                    choices = c("Circles" = "circle",
+                                "Squares" = "square",
+                                "Ellipses" = "ellipse",
+                                "Numbers" = "number"))
       )
-      
-      
     ),
     
-    
-    # Ahoradiseñamos el panel principal
+    # Now we design the main panel
     mainPanel(
-      # Aquí señalamos qué pestañas (tabs) tiene nuestra UI, cómo se llaman y qué tienen
+      # Here we define the tabs our UI will have, their names, and their content
       tabsetPanel(
-        #Pestaña para la previsualización de los datos
+        # Tab for data preview
         tabPanel(
-          "Datos",
+          "Data",
           tableOutput("data_table"),
           verbatimTextOutput("text_info")
         ),
-        #Pestaña para el HeatMap
+        # Tab for the HeatMap
         tabPanel(
           "HeatMap",
           plotOutput("plot_heatmap",
                      height = "600px")
         ),
-        # Pestaña para el gráfico de correlación
+        # Tab for the correlation plot
         tabPanel(
-          "Correlación",
+          "Correlation",
           plotOutput("plot_corr",
                      height = "600px")
         )
@@ -141,92 +136,54 @@ ui <- fluidPage({
   )
 })
 
-#Ahora definimos el servidor: qué hace la aplicación
+# Now we define the server: what the app does
 server <- function(input, output){
   
-  #cargamos el archivo CSV
+  # Load the CSV file
   data <- reactive({
-    req(input$archivo)
-    read.csv(input$archivo$datapath, header = TRUE, row.names = 1)
+    req(input$file)
+    read.csv(input$file$datapath, header = TRUE, row.names = 1)
   })
   
-  # mostramos los datos por Pantalla
+  # Display data on the screen
   
-  #en la página principal "Datos" Moestramos un pequeño texto de información
+  # In the "Data" tab, show a short info message
   output$text_info <- renderPrint({
-    "Aplicación Web creada por Francisco González para 'Software para el análisis de datos'. 2024."
+    "Web application created by Francisco González. 2024."
   })
   
-  # Cuando ocurre un evento (se pulsa el botón de analizar), queda activo el interior de observeEvent
-  observeEvent(input$analizar, {
-    #para el ID data_table, mostramos una tabla que contiene la información cargada en data
+  # When the "Analyze" button is pressed, everything inside observeEvent becomes active
+  observeEvent(input$analyze, {
+    # For the ID data_table, render a table showing the data
     output$data_table <- renderTable({
       data()
     })
     
-    # para el id plot_heatmap, aparece la gráfica del heatmap, con todos los inputs descritos en UI, 
-    # que nos permiten editar el gráfico
+    # For the ID plot_heatmap, render the heatmap using the UI inputs for customization
     output$plot_heatmap<- renderPlot({
       
-      # editamos paleta de colores mediante los colores elegidos por el usuario SI la casilla de 
-      # personalización está activada. En otro caso, se muestra una paleta preestablecida
-      col_fun <- if(input$pers_hm & input$pers_color){
+      # Set color palette using selected colors IF customization checkbox is active
+      col_fun <- if(input$cust_hm & input$cust_color){
         colorRampPalette(c(input$lower_col, input$mid_col, input$upper_col))(100)
       } else {
         colorRampPalette(c("green", "white","red"))(100)
       }
       
-      # Se crea la escala que el usuario ha definido SI el botón de personalización está
-      # seleccionado, en caso contrario, se usa una escala preestablecida
-      breaks_fun <- if(input$pers_hm & input$pers_color){
+      # Create color scale defined by user IF customization is active, otherwise use default
+      breaks_fun <- if(input$cust_hm & input$cust_color){
         seq(from = input$min_col, to = input$max_col, length.out = 101)
       } else {
         seq(from = min(data()), to = max(data()), length.out = 101)
       }
       
-      #Moestramos el HeatMap
+      # Show the HeatMap
       pheatmap(
-        as.matrix(data()), #matriz de datos
-        breaks = breaks_fun, #escala
-        color = col_fun, # paleta de colores
-        fontsize = input$tam_texto, # tamaño del texto
-        cellwidth = ifelse(input$pers_hm, input$anchoCeldas,  50), #ancho y alto de celdas
-        cellheight = ifelse(input$pers_hm, input$alturaCeldas, 50),
+        as.matrix(data()), # data matrix
+        breaks = breaks_fun, # scale
+        color = col_fun, # color palette
+        fontsize = input$label_size, # label size
+        cellwidth = ifelse(input$cust_hm, input$cellWidth,  50), # cell width and height
+        cellheight = ifelse(input$cust_hm, input$cellHeight, 50),
         name = "HeatMap"
-        
       )
     })
-    
-    
-    # para el id plot_corr, aparece el gráfico de correlación, con todos los inputs descritos en UI, 
-    # que nos permiten editar el gráfico
-    output$plot_corr <- renderPlot({
-      
-      # en esta ocasión, damos a seleccionar unas paletas de colores preseleccionadas
-      color_scheme <- switch(input$color_scheme,
-                             "default" = colorRampPalette(c("#6D9EC1", "white", "#E46726"))(200),
-                             "blue_white_red" = colorRampPalette(c("blue", "white", "red"))(200),
-                             "green_yellow_red" = colorRampPalette(c("green", "yellow", "red"))(200))
-      
-      
-      #creamos el gráfico de correlación
-      corrplot(cor(data()), 
-               method = ifelse(input$pers_corr,input$corr_method,"circle"), #método
-               tl.cex = ifelse(input$pers_corr,input$text_size,1), #tamaño textos
-               number.cex = ifelse(input$pers_corr,input$text_size,1),
-               col = color_scheme, #paleta de colores
-               addCoef.col = "black",
-               tl.col = "black",
-               tl.srt = 45,
-               diag = FALSE, #quitamos la diagonal
-               type = "upper", #elegimos el tipo upper
-               addgrid.col = "gray",
-               cl.pos = if(input$show_legend) "r" else "n") #leyenda
-    })
-  })
-  
-  
-}
-
-#comienza nuestra aplicación
-shinyApp(ui = ui, server = server)
