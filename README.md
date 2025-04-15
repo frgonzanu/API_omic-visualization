@@ -6,3 +6,8 @@ R libraries required:
 - shinyWidgets
 - corrplot
 - ComplexHeatMap
+
+
+You can try this app online here! ↓↓↓
+
+https://franciscogonzalez.shinyapps.io/api_omic-visualization/
